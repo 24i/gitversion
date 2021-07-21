@@ -1,0 +1,63 @@
+buildscript {
+    ext {
+        myRepos = {
+            mavenLocal()
+            jcenter()
+            maven {
+                url "https://ssl.nordija.com/artifactory/NordijaPublic"
+                credentials {
+                    username = gradleUsername
+                    password = gradlePassword
+                }
+            }
+        }
+    }
+    repositories myRepos
+    dependencies {
+        classpath "com.nordija:gitMavenVersioning:2.0.+"
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.7.3"
+    }
+}
+apply plugin: 'com.jfrog.artifactory'
+apply plugin: 'groovy'
+apply plugin: 'maven-publish'
+
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+}
+
+apply plugin: 'maven'
+
+repositories myRepos
+
+artifactory {
+    contextUrl = 'https://ssl.nordija.com/artifactory/'
+    publish {
+        repository {
+            repoKey = 'fokuson-public-release-local'
+            username = gradleUsername
+            password = gradlePassword
+            maven = true
+        }
+        defaults {
+            publications ('mavenJava')
+        }
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}
+apply plugin: 'com.nordija.versionManager'
+plugins.apply com.nordija.VersionManagerPlugin
+
+dependencies {
+    testCompile 'junit:junit:4.11'
+}
+
+group = 'com.nordija'
