@@ -56,11 +56,12 @@ publishing {
 dependencies {
     testImplementation 'junit:junit:4.11'
 }
+group = 'com.24i'
 
 gradlePlugin {
     plugins {
         simplePlugin {
-            id = 'com.24i.VersionManager'
+            id = 'com.24i.gitVersion'
             implementationClass = 'com._24i.VersionManagerPlugin'
         }
     }
