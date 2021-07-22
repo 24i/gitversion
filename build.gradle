@@ -21,7 +21,8 @@ buildscript {
 apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'groovy'
 apply plugin: 'maven-publish'
-
+apply plugin: 'com.nordija.versionManager'
+apply plugin:  'java-gradle-plugin'
 dependencies {
     implementation gradleApi()
     implementation localGroovy()
@@ -51,11 +52,16 @@ publishing {
         }
     }
 }
-apply plugin: 'com.nordija.versionManager'
-plugins.apply com.nordija.VersionManagerPlugin
 
 dependencies {
     testImplementation 'junit:junit:4.11'
 }
 
-group = 'com._24i'
+gradlePlugin {
+    plugins {
+        simplePlugin {
+            id = 'com.24i.VersionManager'
+            implementationClass = 'com._24i.VersionManagerPlugin'
+        }
+    }
+}

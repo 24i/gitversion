@@ -1,6 +1,6 @@
 package com._24i
 
-
+import com._24i.VersionManagerTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 

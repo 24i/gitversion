@@ -2,22 +2,36 @@ package com._24i
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.Task
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecResult
 
 class VersionManagerTask extends DefaultTask {
+    @Internal
     String branch = "";
+    @Internal
     String parentBranch = "";
+    @Internal
     String closestHighestTagHash;
+    @Internal
     String closestTag;
+    @Internal
     String closestTagCount;
+    @Internal
     String currentShortCommitHash;
+    @Internal
     String currentCommitHash;
+    @Internal
     String mavenVersion;
+    @Internal
     String appVersion;
+    @Internal
     String gitDescribe;
+    @Internal
     String gitAppDescribe;
+    @Internal
     String gitPaddedVersionCount;
+    @Internal
     boolean snapshot = true;
 
     @Override
@@ -456,6 +470,7 @@ class VersionManagerTask extends DefaultTask {
         return returnValue;
     }
 
+    @Internal
     boolean isProjectDirty() {
         def resultValue = execGitCommand('git', 'status', '--porcelain')
         if (resultValue != null && resultValue.length() > 2) {
