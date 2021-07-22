@@ -1,4 +1,4 @@
-package com.nordija
+package com._24i
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.Task

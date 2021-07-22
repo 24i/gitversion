@@ -26,13 +26,13 @@ Example of buildscript addition:
             maven { url "http://repo.maven.apache.org/maven2" }
         }
         dependencies {
-            classpath group: 'com.nordija', name: 'gitMavenVersioning', version: '1.0.+'
+            classpath group: 'com._24i', name: 'gitMavenVersioning', version: '1.0.+'
         }
     }
 
 Example of usage:
 
-    apply plugin: 'com.nordija.versionManager'
+    apply plugin: 'com._24i.versionManager'
 
 Two tasks can be called:
 

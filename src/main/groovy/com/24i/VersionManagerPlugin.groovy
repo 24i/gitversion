@@ -1,4 +1,4 @@
-package com.nordija
+package com._24i
 
 
 import org.gradle.api.Plugin
