@@ -14,14 +14,14 @@ buildscript {
     }
     repositories myRepos
     dependencies {
-        classpath "com.nordija:gitMavenVersioning:2.0.+"
+        classpath "com.24i:gitVersion:1.+"
         classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.24.14"
     }
 }
 apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'groovy'
 apply plugin: 'maven-publish'
-apply plugin: 'com.nordija.versionManager'
+apply plugin: 'com.24i.gitVersion'
 apply plugin:  'java-gradle-plugin'
 dependencies {
     implementation gradleApi()
