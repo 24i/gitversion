@@ -16,8 +16,6 @@ class VersionManagerTask extends DefaultTask {
     @Internal
     String closestTag;
     @Internal
-    String closestTagCount;
-    @Internal
     String currentShortCommitHash;
     @Internal
     String currentCommitHash;
@@ -33,12 +31,20 @@ class VersionManagerTask extends DefaultTask {
     String gitPaddedVersionCount;
     @Internal
     boolean snapshot = true;
+    @Internal
+    boolean initialized = false;
+    @Internal
+    Task superConfigureTask = null;
 
     @Override
     Task configure(Closure closure) {
-        findGitVersions()
-        setVersions()
-        return super.configure(closure)
+        if (!initialized) {
+            findGitVersions()
+            setVersions()
+            initialized = true;
+            superConfigureTask = super.configure(closure)
+        }
+        return superConfigureTask;
     }
 
     @TaskAction
@@ -51,7 +57,6 @@ class VersionManagerTask extends DefaultTask {
         findCurrentCommitShortHash()
         findClosestTagHash()
         findGitClosestTag()
-        findCountFromClosestTagHash()
         findVersion()
         findGitDescribeVersion()
         findGitAppDescribeVersion()
@@ -196,7 +201,6 @@ class VersionManagerTask extends DefaultTask {
         System.setProperty("gitParentBranch",parentBranch);
         System.setProperty("gitHighestTagHash",closestHighestTagHash);
         System.setProperty("gitHighestTag",closestTag);
-        System.setProperty("gitHighestTagCount",closestTagCount);
         System.setProperty("gitCurrentShortCommitHash",currentShortCommitHash);
         System.setProperty("gitCurrentCommitHash",currentCommitHash);
         System.setProperty("mavenVersion",mavenVersion);
@@ -248,6 +252,7 @@ class VersionManagerTask extends DefaultTask {
                 branchToFindTag = parentBranch
             }
             if (branchToFindTag.equals('master')) {
+                logger.info("findClosestTagHash " + branchToFindTag)
                 def tag = findGitHighestTag()
                 closestHighestTagHash = execGitCommand('git','log', '-1', '--format=format:%H', tag)
                 this.closestTag = tag
@@ -263,6 +268,7 @@ class VersionManagerTask extends DefaultTask {
                         this.closestHighestTagHash = execGitCommand('git', 'rev-list', '-n', '1', tag)
                     }
                 } else {
+                    logger.info("findClosestTagHash else ")
                     def tag = findGitHighestTag()
                     this.closestHighestTagHash = execGitCommand('git','log', '-1', '--format=format:%H', tag)
                     this.closestTag = tag
@@ -335,15 +341,6 @@ class VersionManagerTask extends DefaultTask {
         logger.debug("Found ClosestTag: " + closestTag)
     }
 
-    void findCountFromClosestTagHash()  {
-        closestTagCount = execGitCommand('git', 'rev-list', closestHighestTagHash+'..', '--count')
-        if (closestTagCount == null || closestTagCount.empty) {
-            closestTagCount =  "0";
-        }
-        logger.debug("Found tagCount: " + closestTagCount)
-
-    }
-
     void findVersion() {
         def closestTag = closestTag;
         def gitBranch = branch;
@@ -384,7 +381,7 @@ class VersionManagerTask extends DefaultTask {
                     bugfix = "0-SNAPSHOT";
                 }
             } else if (gitBranch.startsWith("bugfix")) {
-                if ((closestHighestTagHash.equals('0') && minor.equals('0') && closestTagCount.equals('0')) || closestTag.contains("-RC") || closestTag.contains("-M")) {
+                if ((closestHighestTagHash.equals('0') && minor.equals('0')) || closestTag.contains("-RC") || closestTag.contains("-M")) {
                     minor = 0;
                     bugfix = bugfix + '-SNAPSHOT'
                 } else {
@@ -458,16 +455,6 @@ class VersionManagerTask extends DefaultTask {
         }
         appVersion = mavenVersion.replaceAll('-SNAPSHOT','');
         logger.debug("found gitAppDescribe: " + gitAppDescribe)
-    }
-
-
-    String getClosestTagForHash( hash ) {
-        def returnValue = execGitCommand('git', 'describe', '--tags', hash)
-        if (returnValue == null || returnValue.empty) {
-            return "0.0.0"
-        }
-        logger.debug('ClosestTagForHash: ' + hash + ' tag: ' + returnValue)
-        return returnValue;
     }
 
     @Internal
