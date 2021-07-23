@@ -2,7 +2,6 @@ buildscript {
     ext {
         myRepos = {
             mavenLocal()
-            jcenter()
             maven {
                 url "https://ssl.nordija.com/artifactory/NordijaPublic"
                 credentials {
@@ -15,9 +14,12 @@ buildscript {
     repositories myRepos
     dependencies {
         classpath "com.24i:gitVersion:1.+"
-        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.24.14"
     }
 }
+plugins {
+    id "com.jfrog.artifactory" version "4.24.14"
+}
+
 apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'groovy'
 apply plugin: 'maven-publish'
@@ -58,11 +60,11 @@ dependencies {
 }
 group = 'com.24i'
 
-gradlePlugin {
-    plugins {
-        simplePlugin {
-            id = 'com.24i.gitVersion'
-            implementationClass = 'com._24i.VersionManagerPlugin'
-        }
-    }
-}
+//gradlePlugin {
+//    plugins {
+//        simplePlugin {
+//            id = 'com.24i.gitVersion'
+//            implementationClass = 'com._24i.VersionManagerPlugin'
+//        }
+//    }
+//}
