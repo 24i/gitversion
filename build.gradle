@@ -2,6 +2,7 @@ buildscript {
     ext {
         myRepos = {
             mavenLocal()
+            jcenter()
             maven {
                 url "https://ssl.nordija.com/artifactory/NordijaPublic"
                 credentials {
