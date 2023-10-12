@@ -14,7 +14,7 @@ buildscript {
     }
     repositories myRepos
     dependencies {
-        classpath "com.24i:gitVersion:1.+"
+        classpath "com.24i:gitVersion:1.0.2"
     }
 }
 plugins {
