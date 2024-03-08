@@ -80,7 +80,7 @@ class VersionManagerTask extends DefaultTask {
     }
 
     private void findParentBranch() {
-        if (branch != null && !branch.equals('master') && !branch.startsWith("bugfix_")) {
+        if (branch != null && !branch.equals('main') && !branch.startsWith("bugfix_")) {
             def foundHash = parentBranchCommitHash()
             if (foundHash == null || foundHash.isEmpty()) {
                 foundHash = currentCommitHash
@@ -93,7 +93,7 @@ class VersionManagerTask extends DefaultTask {
                     if (foundBranch != null && !foundBranch.isEmpty() && !parentBranchFound.equals(foundBranch)) {
                         if (foundBranch.startsWith('bugfix')) {
                             parentBranchFound = findLowestBranch(foundBranch,parentBranchFound)
-                        } else if (!parentBranchFound.startsWith('bugfix') && foundBranch.equals('master')) {
+                        } else if (!parentBranchFound.startsWith('bugfix') && foundBranch.equals('main')) {
                             parentBranchFound = foundBranch
                         }
                     }
@@ -123,10 +123,10 @@ class VersionManagerTask extends DefaultTask {
         } else if (branchB.startsWith('bugfix')) {
             return branchB
         }
-        if (branchA.equals('master')) {
+        if (branchA.equals('main')) {
             return branchA
         }
-        if (branchB.equals('master')) {
+        if (branchB.equals('main')) {
             return branchB
         }
         return ''
@@ -155,7 +155,7 @@ class VersionManagerTask extends DefaultTask {
                     branchFound = item
                 }
                 branchFound = branchFound.trim().replaceAll('origin\\/','')
-                if (branchFound.startsWith('bugfix_') || branchFound.equals('master')) {
+                if (branchFound.startsWith('bugfix_') || branchFound.equals('main')) {
                     return branchFound
                 }
             }
@@ -174,9 +174,9 @@ class VersionManagerTask extends DefaultTask {
 
         def outputString;
         if (project.hasProperty('CI') && Boolean.valueOf(project.properties['CI'])) {
-            outputString = execGitCommand( 'git', 'log', branch, '--not', 'master', '--pretty=format:%P')
+            outputString = execGitCommand( 'git', 'log', branch, '--not', 'main', '--pretty=format:%P')
         } else {
-            outputString = execGitCommand( 'git', 'log', branch, '--not', 'origin/master', '--pretty=format:%P')
+            outputString = execGitCommand( 'git', 'log', branch, '--not', 'origin/main', '--pretty=format:%P')
         }
         def hashes;
         def version = '';
@@ -251,7 +251,7 @@ class VersionManagerTask extends DefaultTask {
             if (!parentBranch.equals(branch)) {
                 branchToFindTag = parentBranch
             }
-            if (branchToFindTag.equals('master')) {
+            if (branchToFindTag.equals('main')) {
                 logger.info("findClosestTagHash " + branchToFindTag)
                 def tag = findGitHighestTag()
                 closestHighestTagHash = execGitCommand('git','log', '-1', '--format=format:%H', tag)
@@ -330,7 +330,7 @@ class VersionManagerTask extends DefaultTask {
             closestTag = "0.0.0";
         }
         if (branch == null) {
-            branch = "master"
+            branch = "main"
         }
         if (branch.startsWith('bugfix_') && closestTag.equals('0.0.0')) {
             def extractedVersion = branch.replaceAll("bugfix_", "").replaceAll("_", ".")
@@ -371,7 +371,7 @@ class VersionManagerTask extends DefaultTask {
                 branch = 'unknown'
                 return
             }
-            if (gitBranch.equals("master")) {
+            if (gitBranch.equals("main")) {
                 if (closestTag.contains("-M")) {
                     minor = 0;
                     bugfix = "0.0-SNAPSHOT";
